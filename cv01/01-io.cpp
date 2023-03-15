@@ -31,7 +31,7 @@ int main ()
         std::cout - standardni vystup (v C: stdout)
         std::cerr - standardni chybovy vystup (v C: stderr)
         std::cin  - standardni vstup (v C: stdin)
-        std::clog - standardni logovaci vystup
+        std::clog - standardni logovaci vystupyyy
     */
     
     cout << "Zadej cislo datoveho typu int:" << endl;
