@@ -3,17 +3,16 @@
 #include <sstream>
 
 int main() {
-    std::string input;
-    std::string config_data;
+    std::string tmp = "", input;
 
-    while (std::getline(std::cin, input)) {
-        // Přidání načteného řádku na konec řetězce
-        config_data += "\n";
+    // Načtení vstupu dokud je to možné
+    while (std::getline(std::cin, tmp) && tmp.compare("=") != 0) {
+        // Zpracování načteného řádku
+        input += tmp + "\n";
     }
+    std::cout << "input:\n" << input << std::endl;
 
-    std::cout << "Input string: " << input << std::endl;
-
-    input = "config.min=-99\nconfig.max=150\nconfig.width=3\nconfig.align=left";
+    // std::string input = "config.min=-99\nconfig.max=150\nconfig.width=3\nconfig.align=left";
 
     // Vytvoření stringstream objektu ze vstupního řetězce
     std::stringstream ss(input);
@@ -23,7 +22,7 @@ int main() {
     int config_min;
     int config_max;
     int config_width;
-    std::string config_align;
+    std::string config_align = "none";
 
     while (std::getline(ss, token, '\n')) {
         std::stringstream line(token);
