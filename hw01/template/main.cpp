@@ -6,8 +6,17 @@
 #include "main.hpp"
 #include "parse.hpp"
 
+typedef struct { // default values
+    int min = -99;
+    int max = 100;
+    int width = 3;
+    bool align = false; // left: false, right: true
+    bool valid = false;
+}Cfg;
+
 int main(){  
     // variable for decoded config
+    Cfg myCfg;
     config_t config;
     std::string line;
     do{
@@ -15,7 +24,7 @@ int main(){
 
         config = getConfig(line);
         if(config.valid){
-           // todo
+            std::cout << config.value << std::endl;
         }
     }
     while(config.valid);

@@ -1,0 +1,2 @@
+g++ *cpp
+./a.out < ../data/pub01.in
