@@ -18,7 +18,7 @@ public:
 
     void printRow(int elCount, int cellSize) {
         cellSize += 2;
-        for (int i; i < elCount + 1; i++) {
+        for (int i = 0; i < elCount; i++) {
             std::cout << "+" << std::string(cellSize, '-');
         }
         std::cout << "+\n";
