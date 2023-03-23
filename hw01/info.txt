@@ -1,2 +1,2 @@
-g++ *cpp
+g++ -std=c++17 *cpp
 ./a.out < data/pub01.in
