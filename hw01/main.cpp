@@ -1,9 +1,7 @@
 #include <iostream>
-#include <string>
 #include <regex>
-#include <vector>
 #include <iomanip>
-#include "main.hpp"
+#include <sstream>
 #include "parse.hpp"
 
 struct // Default values
@@ -14,15 +12,28 @@ struct // Default values
     bool align = false; // left: false, right: true
 } myCfg;
 
+class Table {
+public:
+    int elCount, cellSize;
+
+    void printRow(int elCount, int cellSize) {
+        cellSize += 2;
+        for (int i; i < elCount + 1; i++) {
+            std::cout << "+" << std::string(cellSize, '-');
+        }
+        std::cout << "+\n";
+    }
+};
+
 int chToInt(char input) {
     return input - 65;
 };
 
 int main() {
-    // Variable for decoded config
+    // variable for decoded config
     config_t config;
     std::string line;
-    do // Parse the configuration
+    do // parse the configuration
     {
         std::getline(std::cin, line);
 
@@ -66,7 +77,7 @@ int main() {
         values.push_back(row);
     }
 
-    // Print out the my configuration
+    // print out the my configuration
     std::cout << "config.min=" << myCfg.min << std::endl;
     std::cout << "config.max=" << myCfg.max << std::endl;
     std::cout << "config.width=" << myCfg.width << std::endl;
@@ -77,14 +88,27 @@ int main() {
         std::cout << "config.align=left\n"
                   << std::endl;
 
-    // Print table
+
+    // declare the table
+    Table myTable;
+    myTable.cellSize = myCfg.width;
+    for (auto i: values) {
+        if (i.size() > myTable.elCount)
+            myTable.elCount = i.size();
+    }
+
+    // print table
     for (std::size_t i = 0; i < values.size(); i++) {
+        myTable.printRow(myTable.elCount, myTable.cellSize);
         for (std::size_t j = 0; j < values[i].size(); j++) {
-            std::cout << values[i][j] << " ";
-            // Tady budu resit sumy
+            if (j == 0)
+                std::cout << "| " << std::setw(myTable.cellSize) << values[i][j] << " | ";
+            else std::cout << std::setw(myTable.cellSize) << values[i][j] << " | ";
+            // sums
         }
         std::cout << std::endl;
     }
+    myTable.printRow(myTable.elCount, myTable.cellSize);
 
     return 0;
 }
