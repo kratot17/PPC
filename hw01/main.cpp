@@ -110,6 +110,5 @@ int main() {
     }
     myTable.printRow(myTable.elCount, myTable.cellSize);
 
-
     return 0;
 }
