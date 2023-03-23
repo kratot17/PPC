@@ -6,22 +6,6 @@
 #include "main.hpp"
 #include "parse.hpp"
 
-namespace table
-{
-    std::string line()
-    {
-        std::stringstream ss;
-        ss << "+" << std::string(10, '-') << "+" << std::string(10, '-') << "+" << std::string(10, '-') << "+\n";
-        return ss.str();
-    }
-}
-
-std::ostream &operator<<(std::ostream &proud, Auto *data)
-{
-    proud << "|" << std::setw(10) << data->znacka << "|" << std::setw(10) << data->motor << "|" << std::setw(10) << data->dvere << "|\n";
-    return proud;
-}
-
 typedef struct // Default values
 {
     int min = -99;
@@ -107,17 +91,6 @@ int main()
             // Tady budu resit sumy
         }
         std::cout << std::endl;
-    }
-
-    // std::cout << table::line();
-
-    for (auto i : values)
-    {
-        for (auto j : i)
-        {
-            // std::cout << i->znacka << " " << i->motor << "\n";
-            std::cout << j << table::line();
-        }
     }
 
     return 0;
