@@ -18,6 +18,7 @@ private:
     char colIdx = 'A';
 public:
     int elCount, cellSize;
+
     void printRow(int elCount, int cellSize) {
         for (int i = 0; i < elCount + 1; i++) {
             std::cout << "+" << std::string(cellSize + 2, '-');
@@ -43,7 +44,7 @@ public:
 
 int chToInt(char input) {
     return input - 65;
-};
+}
 
 int main() {
     // variable for decoded config
@@ -82,11 +83,13 @@ int main() {
     std::regex regex("SUM\\((\\w+):(\\w+)\\)"); // define a regex pattern
     std::smatch match; // define a variable to store the match
 
+    int number = 0, sum = 0, sumFromIdx = 0, sumToIdx = 0, elIdx = 0;
     while (std::getline(std::cin, line)) {
         std::stringstream ss(line);
         std::vector<int> row;
         std::string cell;
-        int number, sum, sumFromIdx, sumToIdx, elIdx;
+        sumToIdx = 0;
+        sumFromIdx = 0;
 
         while (std::getline(ss, cell, ';')) {
             try { // If loaded cell is number
@@ -98,20 +101,19 @@ int main() {
                     sumFromIdx = chToInt(match[1].str()[0]); // extract the first capture group
                     sumToIdx = chToInt(match[2].str()[0]); // extract the second capture group
                 } else {
-                    std::cerr << "Invalid input" <<
-                              std::endl;
+                    std::cerr << "Invalid input" << std::endl;
                     return 101;
                 }
                 sum = 0;
                 for (auto i: row) {
-                    if (sumToIdx + 1 > row.size()) {
-                        std::cerr << "Invalid input" <<
-                                  std::endl;
+                    if (sumToIdx + 1 > int(row.size())) {
+                        std::cerr << "Invalid input" << std::endl;
                         return 101;
                     }
                     if (elIdx >= sumFromIdx && elIdx <= sumToIdx) {
                         sum += i;
                     }
+                    elIdx++;
                 }
                 row.push_back(sum);
             }
@@ -125,7 +127,7 @@ int main() {
             if (j > myCfg.max || j < myCfg.min) {
                 std::cerr << "Out of range" << std::endl;
                 return 100;
-            } else if (std::to_string(j).length() > myCfg.width) {
+            } else if (int(std::to_string(j).length()) > myCfg.width) {
                 std::cerr << "Cell is too short" << std::endl;
                 return 103;
             }
@@ -146,7 +148,7 @@ int main() {
     myTable.cellSize = myCfg.width;
     for (
         auto i: values) {
-        if (i.size() > myTable.elCount)
+        if (int(i.size()) > myTable.elCount)
             myTable.elCount = i.size();
     }
 
@@ -158,7 +160,7 @@ int main() {
             std::cout << "| " << std::setw(myTable.cellSize) << i + 1 << " ";
         else
             std::cout << "| " << std::left << std::setw(myTable.cellSize) << i + 1 << " ";
-        for (std::size_t j = 0; j < myTable.elCount; j++) {
+        for (std::size_t j = 0; int(j) < myTable.elCount; j++) {
             if (myCfg.align) {
                 if (values[i].size() <= j) { // blanks
                     // std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
