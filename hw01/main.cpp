@@ -18,7 +18,6 @@ private:
     char colIdx = 'A';
 public:
     int elCount, cellSize;
-
     void printRow(int elCount, int cellSize) {
         for (int i = 0; i < elCount + 1; i++) {
             std::cout << "+" << std::string(cellSize + 2, '-');
@@ -71,6 +70,13 @@ int main() {
         }
     } while (config.valid);
 
+    // look for errors in configuration
+    if (myCfg.min > myCfg.max || myCfg.width < 0) {
+        std::cerr << "Invalid configuration" <<
+                  std::endl;
+        return 102;
+    }
+
     // parse the data
     std::vector <std::vector<int>> values;
     std::regex regex("SUM\\((\\w+):(\\w+)\\)"); // define a regex pattern
@@ -83,19 +89,26 @@ int main() {
         int number, sum, sumFromIdx, sumToIdx, elIdx;
 
         while (std::getline(ss, cell, ';')) {
-            try // If loaded cell is number
-            {
+            try { // If loaded cell is number
                 number = std::stoi(cell);
                 row.push_back(number);
             }
-            catch (const std::exception &e) // if there is a text (SUM?)
-            {
+            catch (const std::exception &e) { // if loaded cell is not an int
                 if (std::regex_search(cell, match, regex)) { // search for a match
                     sumFromIdx = chToInt(match[1].str()[0]); // extract the first capture group
                     sumToIdx = chToInt(match[2].str()[0]); // extract the second capture group
+                } else {
+                    std::cerr << "Invalid input" <<
+                              std::endl;
+                    return 101;
                 }
                 sum = 0;
                 for (auto i: row) {
+                    if (sumToIdx + 1 > row.size()) {
+                        std::cerr << "Invalid input" <<
+                                  std::endl;
+                        return 101;
+                    }
                     if (elIdx >= sumFromIdx && elIdx <= sumToIdx) {
                         sum += i;
                     }
@@ -106,22 +119,33 @@ int main() {
         values.push_back(row);
     }
 
+    // check for input range and cell size error
+    for (auto i: values) {
+        for (auto j: i) {
+            if (j > myCfg.max || j < myCfg.min) {
+                std::cerr << "Out of range" << std::endl;
+                return 100;
+            } else if (std::to_string(j).length() > myCfg.width) {
+                std::cerr << "Cell is too short" << std::endl;
+                return 103;
+            }
+        }
+    }
+
     // print out the my configuration
     std::cout << "config.min=" << myCfg.min << std::endl;
     std::cout << "config.max=" << myCfg.max << std::endl;
     std::cout << "config.width=" << myCfg.width << std::endl;
     if (myCfg.align)
-        std::cout << "config.align=right\n"
-                  << std::endl;
+        std::cout << "config.align=right\n" << std::endl;
     if (!myCfg.align)
-        std::cout << "config.align=left\n"
-                  << std::endl;
-
+        std::cout << "config.align=left\n" << std::endl;
 
     // declare the table
     Table myTable;
     myTable.cellSize = myCfg.width;
-    for (auto i: values) {
+    for (
+        auto i: values) {
         if (i.size() > myTable.elCount)
             myTable.elCount = i.size();
     }
@@ -136,10 +160,11 @@ int main() {
             std::cout << "| " << std::left << std::setw(myTable.cellSize) << i + 1 << " ";
         for (std::size_t j = 0; j < myTable.elCount; j++) {
             if (myCfg.align) {
-                if (values[i].size() <= j) // blanks
-                    std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
-                else
+                if (values[i].size() <= j) { // blanks
+                    // std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
+                } else {
                     std::cout << "| " << std::setw(myTable.cellSize) << values[i][j] << " ";
+                }
             } else {
                 if (values[i].size() <= j) // blanks
                     std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
