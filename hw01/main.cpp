@@ -134,14 +134,18 @@ int main() {
                 std::cerr << "Out of range" << std::endl;
                 return 100;
             }
-            if (!myCfg.stretch[1]) {
+            if (!myCfg.stretch[1]) { // if stretch is not given
                 if (int(std::to_string(j).length()) > myCfg.width) {
                     std::cerr << "Cell is too short" << std::endl;
                     return 103;
                 }
+            } else if (myCfg.stretch[0]) { // if stretch is given and it's set to 1
+                if (int(std::to_string(j).length()) > myCfg.width)
+                    myCfg.width = int(std::to_string(j).length());
             }
         }
     }
+
 
     // print out the my configuration
     std::cout << "config.min=" << myCfg.min << std::endl;
@@ -160,8 +164,7 @@ int main() {
     // declare the table
     Table myTable;
     myTable.cellSize = myCfg.width;
-    for (
-        auto i: values) {
+    for (auto i: values) {
         if (int(i.size()) > myTable.elCount) {
             myTable.elCount = i.size();
         }
@@ -188,18 +191,30 @@ int main() {
             if (myCfg.align) { // aligned right
                 if (values[i].size() <= j) { // blanks
                     std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
-                } else {
-                    std::cout << "| " << std::setw(myTable.cellSize) << values[i][j] << " ";
+                } else { // cell is not blank
+                    if (int(std::to_string(values[i][j]).length()) >
+                        myCfg.width) { // if number is longer than cell width
+                        std::cout << "| " << std::setw(myTable.cellSize) << std::string(myTable.cellSize, '#') << " ";
+                    } else {
+                        std::cout << "| " << std::setw(myTable.cellSize) << values[i][j] << " ";
+                    }
                 }
             } else { // aligned left
                 if (values[i].size() <= j) // blanks
                     std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
-                else
-                    std::cout << "| " << std::left << std::setw(myTable.cellSize) << values[i][j] << " ";
+                else { // cell is not blank
+                    if (int(std::to_string(values[i][j]).length()) >
+                        myCfg.width) { // if number is longer than cell width
+                        std::cout << "| " << std::setw(myTable.cellSize) << std::string(myTable.cellSize, '#') << " ";
+                    } else {
+                        std::cout << "| " << std::setw(myTable.cellSize) << values[i][j] << " ";
+                    }
+                }
             }
         }
         std::cout << "|" << std::endl;
     }
+    // last row
     if (!myCfg.header[0])
         myTable.printRow(myTable.elCount - 1, myTable.cellSize);
     else
