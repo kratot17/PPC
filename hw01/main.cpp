@@ -11,6 +11,8 @@ struct // Default values
     int max = 100;
     int width = 3;
     bool align = false; // left: false, right: true
+    bool stretch[2] = {false, false}; // {value, if it's given}
+    bool header[2] = {true, false}; // {value, if it's given}
 } myCfg;
 
 class Table {
@@ -58,23 +60,28 @@ int main() {
         if (config.valid) {
             if (config.type == "min")
                 myCfg.min = stoi(config.value);
-            if (config.type == "max")
+            else if (config.type == "max")
                 myCfg.max = stoi(config.value);
-            if (config.type == "width")
+            else if (config.type == "width")
                 myCfg.width = stoi(config.value);
-            if (config.type == "align") {
+            else if (config.type == "align") {
                 if (config.value == "right")
                     myCfg.align = true;
                 else
                     myCfg.align = false;
+            } else if (config.type == "stretch") {
+                myCfg.stretch[1] = true;
+                myCfg.stretch[0] = stoi(config.value);
+            } else if (config.type == "header") {
+                myCfg.header[1] = true;
+                myCfg.header[0] = stoi(config.value);
             }
         }
     } while (config.valid);
 
     // look for errors in configuration
     if (myCfg.min > myCfg.max || myCfg.width < 0) {
-        std::cerr << "Invalid configuration" <<
-                  std::endl;
+        std::cerr << "Invalid configuration" << std::endl;
         return 102;
     }
 
@@ -88,23 +95,20 @@ int main() {
         std::stringstream ss(line);
         std::vector<int> row;
         std::string cell;
-        sumToIdx = 0;
-        sumFromIdx = 0;
 
         while (std::getline(ss, cell, ';')) {
-            try { // If loaded cell is number
+            try { // if loaded cell is number
                 number = std::stoi(cell);
                 row.push_back(number);
             }
             catch (const std::exception &e) { // if loaded cell is not an int
                 if (std::regex_search(cell, match, regex)) { // search for a match
-                    sumFromIdx = chToInt(match[1].str()[0]); // extract the first capture group
-                    sumToIdx = chToInt(match[2].str()[0]); // extract the second capture group
+                    sumFromIdx = chToInt(match[1].str()[0]); // extract the sumFromIdx
+                    sumToIdx = chToInt(match[2].str()[0]); // extract the sumToIdx
                 } else {
                     std::cerr << "Invalid input" << std::endl;
                     return 101;
                 }
-                sum = 0;
                 for (auto i: row) {
                     if (sumToIdx + 1 > int(row.size())) {
                         std::cerr << "Invalid input" << std::endl;
@@ -115,8 +119,10 @@ int main() {
                     }
                     elIdx++;
                 }
+                elIdx = 0;
                 row.push_back(sum);
             }
+            sum = 0;
         }
         values.push_back(row);
     }
@@ -127,9 +133,12 @@ int main() {
             if (j > myCfg.max || j < myCfg.min) {
                 std::cerr << "Out of range" << std::endl;
                 return 100;
-            } else if (int(std::to_string(j).length()) > myCfg.width) {
-                std::cerr << "Cell is too short" << std::endl;
-                return 103;
+            }
+            if (!myCfg.stretch[1]) {
+                if (int(std::to_string(j).length()) > myCfg.width) {
+                    std::cerr << "Cell is too short" << std::endl;
+                    return 103;
+                }
             }
         }
     }
@@ -139,35 +148,50 @@ int main() {
     std::cout << "config.max=" << myCfg.max << std::endl;
     std::cout << "config.width=" << myCfg.width << std::endl;
     if (myCfg.align)
-        std::cout << "config.align=right\n" << std::endl;
-    if (!myCfg.align)
-        std::cout << "config.align=left\n" << std::endl;
+        std::cout << "config.align=right" << std::endl;
+    else
+        std::cout << "config.align=left" << std::endl;
+    if (myCfg.stretch[1])
+        std::cout << "config.stretch=" << myCfg.stretch[0] << "" << std::endl;
+    if (myCfg.header[1])
+        std::cout << "config.header=" << myCfg.header[0] << "" << std::endl;
+    std::cout << std::endl;
 
     // declare the table
     Table myTable;
     myTable.cellSize = myCfg.width;
     for (
         auto i: values) {
-        if (int(i.size()) > myTable.elCount)
+        if (int(i.size()) > myTable.elCount) {
             myTable.elCount = i.size();
+        }
     }
 
     // print table
-    myTable.printHdr(myTable.elCount, myTable.cellSize, myCfg.align);
-    for (std::size_t i = 0; i < values.size(); i++) {
-        myTable.printRow(myTable.elCount, myTable.cellSize);
-        if (myCfg.align)
-            std::cout << "| " << std::setw(myTable.cellSize) << i + 1 << " ";
+    if (myCfg.header[0]) {
+        myTable.printHdr(myTable.elCount, myTable.cellSize, myCfg.align);
+    }
+    for (std::size_t i = 0; i < values.size(); i++) { // rows
+        // header
+        if (!myCfg.header[0])
+            myTable.printRow(myTable.elCount - 1, myTable.cellSize);
         else
-            std::cout << "| " << std::left << std::setw(myTable.cellSize) << i + 1 << " ";
+            myTable.printRow(myTable.elCount, myTable.cellSize);
+        if (myCfg.header[0]) {
+            if (myCfg.align)
+                std::cout << "| " << std::setw(myTable.cellSize) << i + 1 << " ";
+            else
+                std::cout << "| " << std::left << std::setw(myTable.cellSize) << i + 1 << " ";
+        }
+        // cells
         for (std::size_t j = 0; int(j) < myTable.elCount; j++) {
-            if (myCfg.align) {
+            if (myCfg.align) { // aligned right
                 if (values[i].size() <= j) { // blanks
-                    // std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
+                    std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
                 } else {
                     std::cout << "| " << std::setw(myTable.cellSize) << values[i][j] << " ";
                 }
-            } else {
+            } else { // aligned left
                 if (values[i].size() <= j) // blanks
                     std::cout << "| " << std::string(myTable.cellSize, ' ') << " ";
                 else
@@ -176,7 +200,10 @@ int main() {
         }
         std::cout << "|" << std::endl;
     }
-    myTable.printRow(myTable.elCount, myTable.cellSize);
+    if (!myCfg.header[0])
+        myTable.printRow(myTable.elCount - 1, myTable.cellSize);
+    else
+        myTable.printRow(myTable.elCount, myTable.cellSize);
 
     return 0;
 }
