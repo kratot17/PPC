@@ -1,0 +1,1 @@
+// polymorfismus a dedicnost
