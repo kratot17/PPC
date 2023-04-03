@@ -24,8 +24,6 @@ enum class Lndir
     bwd
 };
 
-
-
 class Time
 {
     int seconds; // seconds after midnight

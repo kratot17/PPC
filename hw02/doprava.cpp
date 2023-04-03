@@ -215,4 +215,3 @@ void Network::loadFromFile(string filename)
         std::cout << "Could not open " << filename << ". Network not loaded." << endl;
     }
 }
-
