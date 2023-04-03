@@ -6,7 +6,7 @@ using namespace std;
 
 void print_timetable(Network net, string stop) {
     for (int ln = 0; ln < net.nlines();
-    ln++) {
+         ln++) {
         Line tmpL = net.getLine(ln);
         auto itStop = tmpL.stops.begin();
         for (/*nic nedelam na zacatku*/; itStop != tmpL.stops.end(); itStop++) {
@@ -16,7 +16,7 @@ void print_timetable(Network net, string stop) {
         if (itStop == tmpL.stops.end())
             continue; // skusime najit zastavku v dalsi lince
 
-        int offset = itStop - tmpL.stops.begin(); // sjistime, kolikata je ta zastavka
+        // int offset = itStop - tmpL.stops.begin(); // sjistime, kolikata je ta zastavka
 
         string cilova_zastavka_tam = *tmpL.stops.rbegin();
         string cilova_zastavka_zpet = *tmpL.stops.begin();
@@ -24,17 +24,20 @@ void print_timetable(Network net, string stop) {
         vector <Depart> odjezdy_vpred;
         vector <Depart> odjezdy_vzad;
 
-        for (auto itConn = tmpL.conns_fwd.begin(); itConn != tmpL.conns_fwd.end(); itConn++)
-            odjezdy_vpred.push_back(itConn->at(offset)); // presuneme odjezdy z konkretni zastavky do 1 vektoru
-        for (auto itConn = tmpL.conns_fwd.begin(); itConn != tmpL.conns_bwd.end(); itConn++)
-            odjezdy_vzad.push_back(itConn->at(offset)); // presuneme odjezdy z konkretni zastavky do 1 vektoru
+//        for (auto itConn = tmpL.conns_fwd.begin(); itConn != tmpL.conns_fwd.end(); itConn++) {
+//            odjezdy_vpred.push_back(itConn->at(offset)); // presuneme odjezdy z konkretni zastavky do 1 vektoru
+//        }
+//        for (auto itConn = tmpL.conns_fwd.begin(); itConn != tmpL.conns_bwd.end(); itConn++) {
+//            odjezdy_vzad.push_back(itConn->at(offset)); // presuneme odjezdy z konkretni zastavky do 1 vektoru
+//        }
+        cout << cilova_zastavka_tam << " " << cilova_zastavka_zpet;
 
-        int hh, mm, ss;
-        odjezdy_vpred.at(0).ti.gett(hh, mm, ss); // naplnim si intigery - konkretne prvni odjezd tam
-        cout << "prvni odjezd tam je v " << hh << ":" << mm << ":" << ss << endl;
-
-        odjezdy_vzad.at(0).ti.gett(hh, mm, ss); // naplnim si intigery - konkretne prvni odjezd zpet
-        cout << "prvni odjezd zpet je v " << hh << ":" << mm << ":" << ss << endl;
+//        int hh, mm, ss;
+//        odjezdy_vpred.at(0).ti.gett(hh, mm, ss); // naplnim si intigery - konkretne prvni odjezd tam
+//        cout << "prvni odjezd tam je v " << hh << ":" << mm << ":" << ss;
+//
+//        odjezdy_vzad.at(0).ti.gett(hh, mm, ss); // naplnim si intigery - konkretne prvni odjezd zpet
+//        cout << "prvni odjezd zpet je v " << hh << ":" << mm << ":" << ss;
     }
 }
 
