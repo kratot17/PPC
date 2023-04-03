@@ -1,0 +1,10 @@
+(0) Vitej ve hre! Chces byt elfem <1>, nebo trpaslikem <2>?
+2 1 4
+(1) Stal jsi se elfem. Blizi se k tobe krasna zena. Co udelas? <1> Budu take krasny. <2> Utecu.
+2 2 3
+(2) Zena ti rozetla hlavu velmi ostrou sekerou. Hra pro tebe konci.
+0
+(3) Dobre jsi udelal. Hra i presto konci.
+0
+(4) Stal jsi se trpaslikem. Malickeho vousateho trpaslika nikdo nechce. Hra konci.
+0
