@@ -1,12 +1,9 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
 #include "doprava.hpp"
 
 using namespace std;
-
-void print_row(int rowLen) {
-    cout << "+" << std::string(rowLen - 2, '-') << "+" << endl;
-}
 
 void print_timetable(Network net, string stop) {
     for (int ln = 0; ln < net.nlines();
@@ -39,13 +36,15 @@ void print_timetable(Network net, string stop) {
 
         // table printing
         int hh, mm, ss, rowLen = 80;
-        for (int index = 0; index < odjezdy_vpred.size(); index++) {
+        for (int index = 0; index < (int)odjezdy_vpred.size(); index++) {
             odjezdy_vpred.at(index).ti.gett(hh, mm, ss); // naplnim si intigery - konkretne prvni odjezd tam
             cout << index + 1 << ". odjezd tam je v " << hh << ":" << mm << ":" << ss << endl;
         }
 
-        print_row(rowLen);
-
+        cout << "+" << std::string(rowLen - 2, '-') << "+" << endl;
+        cout << "| " << left << setw(rowLen - 11) << stop << "Line: " << "L" << " |" << endl;
+        cout << "+" << std::string(rowLen - 2, '-') << "+" << endl;
+        cout << "| To: " << left << setw(rowLen / 2) << "|| To: " << "|" << endl;
 
         // mam vsechny informace, ted udelat tabulku
     }
