@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void print_timetable(Network net, string stop) {
+void print_timetable(const Network &net, const string &stop) {
     for (int ln = 0; ln < net.nlines();
          ln++) {
 
@@ -27,27 +27,90 @@ void print_timetable(Network net, string stop) {
         vector<Depart> odjezdy_vpred;
         vector<Depart> odjezdy_vzad;
 
-        for (auto itConn = tmpL.conns_fwd.begin(); itConn != tmpL.conns_fwd.end(); itConn++) {
-            odjezdy_vpred.push_back(itConn->at(offset)); // presuneme odjezdy z konkretni zastavky do 1 vektoru
+        for (auto &itConn: tmpL.conns_fwd) {
+            odjezdy_vpred.push_back(itConn.at(offset)); // presuneme odjezdy z konkretni zastavky do 1 vektoru
         }
-        for (auto itConn = tmpL.conns_bwd.begin(); itConn != tmpL.conns_bwd.end(); itConn++) {
-            odjezdy_vzad.push_back(itConn->at(offset));
+        for (auto &itConn: tmpL.conns_bwd) {
+            odjezdy_vzad.push_back(itConn.at(offset));
         }
 
         // table printing
-        int hh, mm, ss, rowLen = 80;
-        for (int index = 0; index < (int)odjezdy_vpred.size(); index++) {
-            odjezdy_vpred.at(index).ti.gett(hh, mm, ss); // naplnim si intigery - konkretne prvni odjezd tam
-            cout << index + 1 << ". odjezd tam je v " << hh << ":" << mm << ":" << ss << endl;
+        int hh, mm, ss, depInHour = 0, rowLen = 80;
+        // header
+        cout << "+" << std::string(rowLen - 2, '-') << "+" << endl;
+        cout << "| " << left << setw(rowLen - 11) << stop << "Line: " << ln << " |" << endl;
+        cout << "+" << std::string(38, '-') << "++" << std::string(38, '-') << "+" << endl;
+        cout << "| To: " << left << setw(rowLen - 47) << cilova_zastavka_tam << "|| To: " << left << setw(rowLen - 47)
+             << cilova_zastavka_zpet << "|" << endl;
+        cout << "+" << std::string(4, '-') << "+" << std::string(33, '-') << "++" << std::string(4, '-') << "+"
+             << std::string(33, '-') << "+" << endl;
+        // body
+        for (int hour = 0; hour < 24; hour++) {
+            cout << "| " << std::setw(2) << std::setfill('0') << right << hour << " | ";
+            for (auto &index: odjezdy_vpred) {
+                index.ti.gett(hh, mm, ss); // naplnim si intigery - konkretne prvni odjezd tam
+                if (hour == hh) {
+                    cout << std::setw(2) << right << mm << " ";
+                    depInHour++;
+                }
+            }
+            cout << std::string(32 - (3 * depInHour), ' ') << "|";
+            depInHour = 0;
+            // second column
+            cout << "| " << std::setw(2) << right << hour << " | ";
+            for (auto &index: odjezdy_vzad) {
+                index.ti.gett(hh, mm, ss); // naplnim si intigery - konkretne prvni odjezd tam
+                if (hour == hh) {
+                    cout << std::setw(2) << right << mm << " ";
+                    depInHour++;
+                }
+            }
+            cout << std::string(32 - (3 * depInHour), ' ') << "|" << std::setfill(' ') << endl;
+            depInHour = 0;
+        }
+        cout << "+" << std::string(4, '-') << "+" << std::string(33, '-') << "++" << std::string(4, '-') << "+"
+             << std::string(33, '-') << "+" << endl;
+    }
+}
+
+void print_lines(const Network &net, const string &stop) {
+    cout << "hallo" << endl;
+    for (int ln = 0; ln < net.nlines();
+         ln++) {
+
+        // data handling
+        Line tmpL = net.getLine(ln);
+        auto itStop = tmpL.stops.begin();
+        for (/*nic nedelam na zacatku*/; itStop != tmpL.stops.end(); itStop++) {
+            if (stop == *itStop) // porovname zda se vyhledavana zastavka rovna sktualni
+                break;
+        }
+        if (itStop == tmpL.stops.end())
+            continue; // zkusime najit zastavku v dalsi lince
+
+        int offset = itStop - tmpL.stops.begin(); // zjistime, kolikata je ta zastavka
+
+        string cilova_zastavka_tam = *tmpL.stops.rbegin();
+        string cilova_zastavka_zpet = *tmpL.stops.begin();
+
+        vector<Depart> odjezdy_vpred;
+        vector<Depart> odjezdy_vzad;
+
+        for (auto &itConn: tmpL.conns_fwd) {
+            odjezdy_vpred.push_back(itConn.at(offset)); // presuneme odjezdy z konkretni zastavky do 1 vektoru
+        }
+        for (auto &itConn: tmpL.conns_bwd) {
+            odjezdy_vzad.push_back(itConn.at(offset));
         }
 
+        // table printing
+        int rowLen = 80;
+        // header
         cout << "+" << std::string(rowLen - 2, '-') << "+" << endl;
-        cout << "| " << left << setw(rowLen - 11) << stop << "Line: " << "L" << " |" << endl;
-        cout << "+" << std::string(rowLen - 2, '-') << "+" << endl;
-        cout << "| To: " << left << setw(rowLen / 2) << "|| To: " << "|" << endl;
-
-        // mam vsechny informace, ted udelat tabulku
+        cout << "| " << left << setw(rowLen - 11) << stop << "Line: " << ln << " |" << endl;
+        cout << "+" << std::string(38, '-') << "++" << std::string(38, '-') << "+" << endl;
     }
+
 }
 
 int main(int argc, char **argv) {
@@ -89,13 +152,14 @@ int main(int argc, char **argv) {
 
         // This is an example, how it can be done using lambda-function
         for_each(stop_in.begin(), stop_in.end(), [&](string stop_name) { print_timetable(net, stop_name); });
-        // This is an example, how it can be done using for-loop 
+        // This is an example, how it can be done using for-loop
         // for( auto iter = stop_in.begin(); iter != stop_in.end(); iter++) print_timetable(net,*iter);
 
         /* here should end the code for printing timetables*/
     } else if ((!flag_in.compare("--line-routing"))) {
 
         /* here should start the code for printing line routes without stats*/
+        for_each(stop_in.begin(), stop_in.end(), [&](string stop_name) { print_lines(net, stop_name); });
 
 
 
