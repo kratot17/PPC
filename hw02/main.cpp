@@ -76,8 +76,13 @@ void print_timetable(const Network &net, const string &stop) {
 
 void print_lines(const Network &net) {
     vector<long> departs;
+    vector<long> departs2;
     int rowLen = 80;
     int first_time[3] = {0, 0, 0};
+    int prev_time[3] = {0, 0, 0};
+    int first_time2[3] = {0, 0, 0};
+    int prev_time2[3] = {0, 0, 0};
+    int d, d2, rT = 0, rT2 = 0, hh = 0, mm = 0, ss = 0, hh2 = 0, mm2 = 0, ss2 = 0;
     for (int ln = 0; ln < net.nlines();
          ln++) {
         // header
@@ -91,8 +96,12 @@ void print_lines(const Network &net) {
              << "+" << endl;
         // body
         Line tmpL = net.getLine(ln);
+
         for (int i = 0; i < tmpL.stops.size(); i++) {
-            int d = 1, rT = 1, hh, mm, ss;
+            // 1st coll
+            prev_time[0] = hh;
+            prev_time[1] = mm;
+            prev_time[2] = ss;
             auto stp = tmpL.conns_fwd.begin();
             stp->at(i).ti.gett(hh, mm, ss);
             if (i == 0) {
@@ -101,13 +110,47 @@ void print_lines(const Network &net) {
                 first_time[2] = ss;
             }
             departs.push_back(stp->at(i).ti.gets());
-            // udelat to samy i na druhou stranu
-            // spocitat rozdily
-            // zaporny casy vyresim 60 soustavou
+            if ((mm - first_time[1]) < 0) {
+                rT = 60 + mm - first_time[1];
+            } else rT = mm - first_time[1];
+            if (i == 0) {
+                d = 0;
+            } else {
+                if ((mm - prev_time[1]) < 0) {
+                    d = 60 + mm - prev_time[1];
+                } else d = mm - prev_time[1];
+                if (prev_time[2] > ss) d--;
+            }
 
-            cout << "| " << d << " | " << right << std::setfill('0') << std::setw(2) << mm - first_time[1] << left << std::setfill(' ')
+            // 2nd coll
+            prev_time2[0] = hh2;
+            prev_time2[1] = mm2;
+            prev_time2[2] = ss2;
+            auto stp2 = tmpL.conns_bwd.begin();
+            stp2->at(i).ti.gett(hh2, mm2, ss2);
+            if (i == 0) {
+                first_time2[0] = hh2;
+                first_time2[1] = mm2;
+                first_time2[2] = ss2;
+            }
+            departs2.push_back(stp2->at(i).ti.gets());
+            if ((mm2 - first_time2[1]) < 0) {
+                rT2 = first_time2[1] - mm2;
+            } else rT2 = mm2 - first_time2[1];
+            if (i == 0) {
+                d2 = 0;
+            } else {
+                if ((mm2 - prev_time2[1]) < 0) {
+                    d2 = prev_time2[1] - mm2;
+                } else d2 = mm2 - prev_time2[1];
+//                if (prev_time2[2] > ss) d2++;
+            }
+            cout << "current departure: " << hh2 << " " << mm2 << " " << ss2 << " prev_time: " << prev_time2[0] << " "
+                 << prev_time2[1] << " " << prev_time2[2] << " " << endl;
+            cout << "| " << d << " | " << right << std::setfill('0') << std::setw(2) << rT << left << std::setfill(' ')
                  << " | " << std::setw(28)
-                 << tmpL.stops.at(i) << "|| " << d << " | " << right << std::setfill('0') << std::setw(2) << rT << left
+                 << tmpL.stops.at(i) << "|| " << d2 << " | " << right << std::setfill('0') << std::setw(2) << rT2
+                 << left
                  << std::setfill(' ') << " | "
                  << std::setw(28) << tmpL.stops.at(tmpL.stops.size() - (i + 1)) << "|" << endl;
         }
