@@ -15,29 +15,21 @@ public:
 
     virtual ~Item();
     
-
     friend sort_name;
 };
 
 // Book related to the Database
 class Book : public Item {
 public:
-    Book(std::string title, std::string author, std::string year)
-            : Item(title, year), author(author) {}
-
-    std::string getAuthor() const { return author; }
-
-private:
-    std::string author;
+    Book(std::string name, std::string author, std::string year)
+    : Item(name, year) {}
 };
 
 // Journal related to the Database
 class Journal : public Item {
 public:
-    Journal(const std::string& name, const std::string& volume, const std::string& issue, const std::string& year)
-            : Item(name, year), volume(volume), issue(issue) {}
-    std::string volume;
-    std::string issue;
+    Journal(std::string name, std::string volume, std::string issue, std::string year)
+    : Item(name, year) {}
 };
 
 // declaration of the sort function according to name

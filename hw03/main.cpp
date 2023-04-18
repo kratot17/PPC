@@ -19,9 +19,8 @@ bool sort_name::operator()(const Item *a, const Item *b) {
 }
 
 // constructor of the Item class
-Item::Item(std::string a, std::string b){
+Item::Item(std::string a, std::string b) {
 }
-
 
 void Database::list() {
     std::cout << "List of all items in the database:\n";
