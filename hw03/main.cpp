@@ -19,7 +19,7 @@ bool sort_name::operator()(const Item *a, const Item *b) {
 }
 
 // constructor of the Item class
-Item::Item(std::string a, std::string b) : a(a), b(b) {
+Item::Item(std::string a, std::string b){
 }
 
 

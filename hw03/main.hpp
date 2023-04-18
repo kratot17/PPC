@@ -14,6 +14,7 @@ public:
     Item(std::string a, std::string b);
 
     virtual ~Item();
+    
 
     friend sort_name;
 };
