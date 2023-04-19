@@ -13,7 +13,9 @@ protected:
 
 public:
     std::string name, year;
-    Item(std::string a, std::string b);
+    Item(std::string a, std::string b) {
+        
+    };
 
     virtual ~Item();
     virtual void print_info() = 0;
@@ -56,7 +58,8 @@ public:
     void add(Item *a);
 
     void list();                        // declaration of list method
-    void find(const std::string &name); // declaration of find method
+    void find(const std::string &key); // declaration of find method
+    void erase(const std::string &key); // declaration of erase method
     ~Database();                        // declare destructor
 };
 

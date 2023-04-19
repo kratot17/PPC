@@ -39,12 +39,14 @@ void Book::print_info()
     std::string line = year + ", " + author;
     std::cout << "| " << std::setfill(' ') << std::setw(2) << std::right << ID << " | " << std::left << std::setw(52) << name << "|\n"
               << "|" << std::string(4, ' ') << "| " << std::setw(52) << line << "|" << std::endl;
+    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
 }
 void Journal::print_info()
 {
     std::string line = year + ", " + volume + "(" + issue + ")";
     std::cout << "| " << std::setfill(' ') << std::setw(2) << std::right << ID << " | " << std::left << std::setw(52) << name << "|\n"
               << "|" << std::string(4, ' ') << "| " << std::setw(52) << line << "|" << std::endl;
+    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
 }
 
 void Database::list()
@@ -52,27 +54,50 @@ void Database::list()
     int elCount = 0;
     std::cout << "+" << std::string(58, '-') << "+\n";
     std::cout << "| "
-              << "List of all records" << std::string(38, ' ') << "|\n";
+              << std::setfill(' ') << std::left << std::setw(57) << "List of all records"
+              << "|\n";
+
     std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
     for (int i = 0; i < (int)db.size(); i++)
     {
         db[i]->print_info();
-        std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
-        elCount = i + 1;
+        elCount++;
     }
     std::cout << "| "
               << "Total: " << elCount << std::string(49, ' ') << "|" << std::endl;
     std::cout << "+" << std::string(58, '-') << "+\n";
 }
 
-void Database::find(const std::string &name)
+void Database::find(const std::string &key)
 {
-    std::cout << "Items with name \"" << name << "\":\n";
-    for (const auto &item : db)
+    std::string line = "Search for \"" + key + "\"";
+
+    int elCount = 0;
+    std::cout << "+" << std::string(58, '-') << "+\n";
+    std::cout << "| "
+              << std::setfill(' ') << std::left << std::setw(57) << line << "|\n";
+    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
+    for (int i = 0; i < (int)db.size(); i++)
     {
-        if (item->name == name)
+        if (db[i]->name == key) // || db[i]->author add search variation
         {
-            std::cout << item->name << ", " << item->year << "\n";
+            db[i]->print_info();
+            elCount++;
+        }
+    }
+    std::cout << "| "
+              << "Total: " << elCount << std::string(49, ' ') << "|" << std::endl;
+    std::cout << "+" << std::string(58, '-') << "+\n";
+}
+
+void Database::erase(const std::string &key)
+{
+    std::cout << "This is to be erased: " << key << std::endl;
+    for (int i = 0; i < (int)db.size(); i++)
+    {
+        if (db[i]->name == key) // || db[i]->author add erase variation
+        {
+            delete db[i];
         }
     }
 }
@@ -108,6 +133,8 @@ int main()
             std::string argument = a.substr(position + 1);
             if (command == "find")
                 db.find(argument);
+            else if (command == "erase")
+                db.erase(argument);
             // put here other cmds
         }
     }
