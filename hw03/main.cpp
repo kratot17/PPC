@@ -32,129 +32,132 @@ Item::Item(std::string a, std::string b)
 Item::~Item()
 {
 }
-
+void print_header(std::string argument)
+{
+    std::cout << "+" << std::string(58, '-') << "+\n";
+    std::cout << "| "
+              << std::setfill(' ') << std::left << std::setw(57) << argument
+              << "|\n";
+}
 void Item::print_info() {}
 void Book::print_info()
 {
+    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
     std::string line = year + ", " + author;
     std::cout << "| " << std::setfill(' ') << std::setw(2) << std::right << ID << " | " << std::left << std::setw(52) << name << "|\n"
               << "|" << std::string(4, ' ') << "| " << std::setw(52) << line << "|" << std::endl;
-    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
 }
 void Journal::print_info()
 {
+    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
     std::string line = year + ", " + volume + "(" + issue + ")";
     std::cout << "| " << std::setfill(' ') << std::setw(2) << std::right << ID << " | " << std::left << std::setw(52) << name << "|\n"
               << "|" << std::string(4, ' ') << "| " << std::setw(52) << line << "|" << std::endl;
-    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
 }
 
-void Database::list()
+void Item::set_id(int i) {}
+void Book::set_id(int i)
 {
-    int elCount = 0;
-    std::cout << "+" << std::string(58, '-') << "+\n";
-    std::cout << "| "
-              << std::setfill(' ') << std::left << std::setw(57) << "List of all records"
-              << "|\n";
-
-    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
-    for (int i = 0; i < (int)db.size(); i++)
-    {
-        db[i]->print_info();
-        elCount++;
-    }
-    std::cout << "| "
-              << "Total: " << elCount << std::string(49, ' ') << "|" << std::endl;
-    std::cout << "+" << std::string(58, '-') << "+\n";
+    ID = i + 1;
 }
-void Book::set_id(int i){
-    ID=i+1;
+void Journal::set_id(int i)
+{
+    ID = i + 1;
 }
-void Journal::set_id(int i){
-    ID=i+1;
-}
-void Item::set_id(int i){}
-
 
 bool Book::compare_argmunet(std::string argument)
 {
     std::stringstream ss;
     ss << year << ", " << name << ", " << author;
     if (ss.str().find(argument) != std::string::npos)
-    {
         return true;
-    }
     else
-    {
         return false;
-    }
 }
 bool Journal::compare_argmunet(std::string argument)
 {
     std::stringstream ss;
-    ss << year << ", " << name << ", " << issue <<", "<<volume;
+    ss << year << ", " << name << ", " << issue << ", " << volume;
     if (ss.str().find(argument) != std::string::npos)
-    {
         return true;
-    }
     else
-    {
         return false;
+}
+
+void Database::list()
+{
+    int elCount = 0;
+    print_header("List of all records");
+    for (int i = 0; i < (int)db.size(); i++)
+    {
+        db[i]->print_info();
+        elCount++;
     }
+    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
+    std::cout << "| "
+              << "Total: " << elCount << std::string(49, ' ') << "|" << std::endl;
+    std::cout << "+" << std::string(58, '-') << "+\n";
 }
 void Database::find(const std::string &key)
 {
-    std::string line = "Search for \"" + key + "\"";
-
+    print_header("Search for \"" + key + "\"");
     int elCount = 0;
-    std::cout << "+" << std::string(58, '-') << "+\n";
-    std::cout << "| "
-              << std::setfill(' ') << std::left << std::setw(57) << line << "|\n";
-    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
     for (int i = 0; i < (int)db.size(); i++)
     {
-        if (db[i]->compare_argmunet(key)) // || db[i]->author add search variation
+        if (db[i]->compare_argmunet(key))
         {
             db[i]->print_info();
             elCount++;
         }
     }
+    std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
     std::cout << "| "
               << "Total: " << elCount << std::string(49, ' ') << "|" << std::endl;
     std::cout << "+" << std::string(58, '-') << "+\n";
 }
-
 void Database::erase(const std::string &key)
 {
-    std::cout << "This is to be erased: " << key << std::endl;
-  //  std::vector<int> to_destuct;
-  std::cout<<db.size()<<std::endl;
+    std::cout << db.size() << std::endl;
     for (int i = 0; i < (int)db.size(); i++)
     {
-        if (db[i]->compare_argmunet(key)) // || db[i]->author add erase variation
-        {   
+        if (db[i]->compare_argmunet(key))
+        {
             delete db[i];
-            db.erase();
-        std::cout<<db.size()<<std::endl;
+            std::cout << db.size() << std::endl;
             for (int i = 0; i < (int)db.size(); i++)
             {
-                std::cout<<db.size()<<std::endl;
+                std::cout << db.size() << std::endl;
                 db[i]->print_info();
             }
-            
-            
-        }else{
+        }
+        else
+        {
             continue;
         }
     }
-    
-    
 }
-void Database::set_id(){
-for(int i=0;i<(int)db.size();i++){
-    db[i]->set_id(i);
+void Database::remove(const std::string &id)
+{
+    print_header("ID = " + id + "is not in the database");
+    std::cout << "+" << std::string(58, '-') << "+\n";
+
+    int elCount = 0;
+    for (int i = 0; i < (int)db.size(); i++)
+    {
+        if (db[i]->compare_argmunet(id))
+        {
+            db[i]->print_info();
+            elCount++;
+        }
+    }
 }
 
+void Database::set_id()
+{
+    for (int i = 0; i < (int)db.size(); i++)
+    {
+        db[i]->set_id(i);
+    }
 }
 
 Database::~Database()
@@ -191,7 +194,15 @@ int main()
                 db.find(argument);
             else if (command == "erase")
                 db.erase(argument);
-            // put here other cmds
+            else if (command == "remove")
+            {
+                db.remove(argument);
+            }
+            else
+            {
+                print_header("Unknown command \"delete\"");
+                std::cout << "+" << std::string(58, '-') << "+\n";
+            }
         }
     }
     return 0;

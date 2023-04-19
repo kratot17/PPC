@@ -17,8 +17,8 @@ public:
 
     virtual ~Item();
     virtual void print_info() = 0;
-    virtual bool compare_argmunet(std::string argument)=0;
-    virtual void set_id(int i)=0;
+    virtual bool compare_argmunet(std::string argument) = 0;
+    virtual void set_id(int i) = 0;
 
     friend sort_name;
 };
@@ -29,8 +29,8 @@ public:
     std::string author;
     Book(std::string name, std::string author, std::string year) : Item(name, year), author(author) {}
     void print_info() override;
-     bool compare_argmunet(std::string argument)override;
-     void set_id(int i)override;
+    bool compare_argmunet(std::string argument) override;
+    void set_id(int i) override;
 };
 
 class Journal : public Item
@@ -40,8 +40,8 @@ public:
     std::string issue;
     Journal(std::string name, std::string volume, std::string issue, std::string year) : Item(name, year), volume(volume), issue(issue) {}
     void print_info() override;
-     bool compare_argmunet(std::string argument)override;
-    void set_id(int i)override;
+    bool compare_argmunet(std::string argument) override;
+    void set_id(int i) override;
 };
 
 // declaration of the sort function according to name
@@ -56,14 +56,14 @@ private:
     std::vector<Item *> db;
 
 public:
-    // put db.find and db.list here
     Database();
 
     void add(Item *a);
     void set_id();
     void list();                        // declaration of list method
-    void find(const std::string &key); // declaration of find method
+    void find(const std::string &key);  // declaration of find method
     void erase(const std::string &key); // declaration of erase method
+    void remove(const std::string &id); // declaration of erase method
     ~Database();                        // declare destructor
 };
 
