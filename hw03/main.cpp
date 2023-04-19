@@ -67,7 +67,41 @@ void Database::list()
               << "Total: " << elCount << std::string(49, ' ') << "|" << std::endl;
     std::cout << "+" << std::string(58, '-') << "+\n";
 }
+void Book::set_id(int i){
+    ID=i+1;
+}
+void Journal::set_id(int i){
+    ID=i+1;
+}
+void Item::set_id(int i){}
 
+
+bool Book::compare_argmunet(std::string argument)
+{
+    std::stringstream ss;
+    ss << year << ", " << name << ", " << author;
+    if (ss.str().find(argument) != std::string::npos)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+bool Journal::compare_argmunet(std::string argument)
+{
+    std::stringstream ss;
+    ss << year << ", " << name << ", " << issue <<", "<<volume;
+    if (ss.str().find(argument) != std::string::npos)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 void Database::find(const std::string &key)
 {
     std::string line = "Search for \"" + key + "\"";
@@ -79,7 +113,7 @@ void Database::find(const std::string &key)
     std::cout << "+" << std::string(4, '-') << "+" << std::string(53, '-') << "+\n";
     for (int i = 0; i < (int)db.size(); i++)
     {
-        if (db[i]->name == key) // || db[i]->author add search variation
+        if (db[i]->compare_argmunet(key)) // || db[i]->author add search variation
         {
             db[i]->print_info();
             elCount++;
@@ -93,13 +127,34 @@ void Database::find(const std::string &key)
 void Database::erase(const std::string &key)
 {
     std::cout << "This is to be erased: " << key << std::endl;
+  //  std::vector<int> to_destuct;
+  std::cout<<db.size()<<std::endl;
     for (int i = 0; i < (int)db.size(); i++)
     {
-        if (db[i]->name == key) // || db[i]->author add erase variation
-        {
+        if (db[i]->compare_argmunet(key)) // || db[i]->author add erase variation
+        {   
             delete db[i];
+            db.erase();
+        std::cout<<db.size()<<std::endl;
+            for (int i = 0; i < (int)db.size(); i++)
+            {
+                std::cout<<db.size()<<std::endl;
+                db[i]->print_info();
+            }
+            
+            
+        }else{
+            continue;
         }
     }
+    
+    
+}
+void Database::set_id(){
+for(int i=0;i<(int)db.size();i++){
+    db[i]->set_id(i);
+}
+
 }
 
 Database::~Database()
@@ -118,6 +173,7 @@ int main()
     db.add(new Book("Dva roky prazdnin", "Jules Verne", "1888"));
     db.add(new Book("Tajuplny ostrov", "Jules Verne", "1874"));
     db.add(new Book("Ocelove mesto", "Jules Verne", "1879"));
+    db.set_id();
     std::string a;
     while (std::getline(std::cin, a))
     {
