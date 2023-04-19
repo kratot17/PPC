@@ -6,51 +6,58 @@
 
 struct sort_name;
 
-class Item {
+class Item
+{
 protected:
     int ID;
+
 public:
     std::string name, year;
     Item(std::string a, std::string b);
 
     virtual ~Item();
-    
+    virtual void print_info() = 0;
+
     friend sort_name;
 };
 
-
-
-// Book related to the Database
-class Book : public Item {
+class Book : public Item
+{
 public:
-    Book(std::string name, std::string author, std::string year)
-    : Item(name, year) {}
+    std::string author;
+    Book(std::string name, std::string author, std::string year) : Item(name, year), author(author) {}
+    void print_info() override;
 };
 
-// Journal related to the Database
-class Journal : public Item {
+class Journal : public Item
+{
 public:
-    Journal(std::string name, std::string volume, std::string issue, std::string year)
-    : Item(name, year) {}
+    std::string volume;
+    std::string issue;
+    Journal(std::string name, std::string volume, std::string issue, std::string year) : Item(name, year), volume(volume), issue(issue) {}
+    void print_info() override;
 };
 
 // declaration of the sort function according to name
-struct sort_name {
+struct sort_name
+{
     inline bool operator()(const Item *a, const Item *b);
 };
 
-class Database {
+class Database
+{
 private:
     std::vector<Item *> db;
+
 public:
     // put db.find and db.list here
     Database();
 
     void add(Item *a);
 
-    void list(); // declaration of list method
+    void list();                        // declaration of list method
     void find(const std::string &name); // declaration of find method
-    ~Database(); // declare destructor
+    ~Database();                        // declare destructor
 };
 
 #endif // __MAIN_HPP__
