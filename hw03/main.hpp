@@ -17,7 +17,7 @@ public:
 
     virtual ~Item();
     virtual void print_info() = 0;
-    virtual bool compare_argmunet(std::string argument) = 0;
+    virtual bool compare_argument(std::string argument) = 0;
     virtual void set_id(int i) = 0;
 
     friend sort_name;
@@ -29,7 +29,7 @@ public:
     std::string author;
     Book(std::string name, std::string author, std::string year) : Item(name, year), author(author) {}
     void print_info() override;
-    bool compare_argmunet(std::string argument) override;
+    bool compare_argument(std::string argument) override;
     void set_id(int i) override;
 };
 
@@ -40,7 +40,7 @@ public:
     std::string issue;
     Journal(std::string name, std::string volume, std::string issue, std::string year) : Item(name, year), volume(volume), issue(issue) {}
     void print_info() override;
-    bool compare_argmunet(std::string argument) override;
+    bool compare_argument(std::string argument) override;
     void set_id(int i) override;
 };
 
