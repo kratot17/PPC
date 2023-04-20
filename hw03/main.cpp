@@ -14,22 +14,23 @@ void Database::add(Item *a) {
 }
 
 void Database::sort(std::string sort_by, std::string sort_order) {
-    std::cout << "I want to sort by: " << sort_by << " Order will be: " << sort_order << std::endl;
+//    std::cout << "I want to sort by: " << sort_by << " Order will be: " << sort_order << std::endl;
     bool change_was_made = true;
     if (sort_by == "id") {}
     else if (sort_by == "name") {
         while (change_was_made) {
             for (int i = 0; i < db.size() - 1; ++i) {
-                if (sort_name()) {}
+                if (sort_name()) {
+                    change_was_made = true;
+                } else change_was_made = false;
             }
         }
-    }
-    else if (sort_by == "year") {}
+    } else if (sort_by == "year") {}
 }
 
 // sorting functions
 bool sort_id::operator()(const Item *a, const Item *b) {
-    return a->name.compare(b->name);
+    return a->ID > b->ID;
 }
 
 bool sort_name::operator()(const Item *a, const Item *b) {
@@ -37,7 +38,7 @@ bool sort_name::operator()(const Item *a, const Item *b) {
 }
 
 bool sort_year::operator()(const Item *a, const Item *b) {
-    return a->name.compare(b->name);
+    return a->year.compare(b->year);
 }
 
 // constructor of the Item class
