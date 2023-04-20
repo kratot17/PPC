@@ -122,13 +122,7 @@ void Database::erase(const std::string &key)
     {
         if (db[i]->compare_argmunet(key))
         {
-            delete db[i];
-            std::cout << db.size() << std::endl;
-            for (int i = 0; i < (int)db.size(); i++)
-            {
-                std::cout << db.size() << std::endl;
-                db[i]->print_info();
-            }
+            db.erase(db.begin()+i);
         }
         else
         {
