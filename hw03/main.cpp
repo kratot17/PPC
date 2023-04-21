@@ -14,18 +14,39 @@ void Database::add(Item *a) {
 }
 
 void Database::sort(std::string sort_by, std::string sort_order) {
-//    std::cout << "I want to sort by: " << sort_by << " Order will be: " << sort_order << std::endl;
     bool change_was_made = true;
-    if (sort_by == "id") {}
-    else if (sort_by == "name") {
+    if (sort_by == "id") {
         while (change_was_made) {
+            change_was_made = false;
             for (int i = 0; i < db.size() - 1; ++i) {
-                if (sort_name()) {
+                if (db[i] > db[i + 1]) {
+                    iter_swap(db.begin() + i, db.begin() + (i + 1));
                     change_was_made = true;
-                } else change_was_made = false;
+                } else continue;
             }
         }
-    } else if (sort_by == "year") {}
+    } else if (sort_by == "name") {
+        while (change_was_made) {
+            change_was_made = false;
+            for (int i = 0; i < (int)db.size() - 1; ++i) {
+                if (db[i] > db[i + 1]) {
+                    iter_swap(db.begin() + i, db.begin() + (i + 1));
+                    change_was_made = true;
+                    std::cout << "change was made" << std::endl;
+                } else continue;
+            }
+        }
+    } else if (sort_by == "year") {
+        while (change_was_made) {
+            change_was_made = false;
+            for (int i = 0; i < db.size() - 1; ++i) {
+                if (db[i] > db[i + 1]) {
+                    iter_swap(db.begin() + i, db.begin() + (i + 1));
+                    change_was_made = true;
+                } else continue;
+            }
+        }
+    }
 }
 
 // sorting functions
