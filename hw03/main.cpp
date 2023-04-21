@@ -19,13 +19,26 @@ void Database::sort(std::string sort_by, std::string sort_order) {
         if (sort_order == "desc")
             std::reverse(db.begin(), db.end());
     } else if (sort_by == "name") {
-        std::sort(db.begin(), db.end(), sort_name());
-        if (sort_order == "desc")
+        if (sort_order == "desc") {
+            std::sort(db.begin(), db.end(), sort_id());
             std::reverse(db.begin(), db.end());
+            std::sort(db.begin(), db.end(), sort_name());
+            std::reverse(db.begin(), db.end());
+        } else {
+            std::sort(db.begin(), db.end(), sort_id());
+            std::sort(db.begin(), db.end(), sort_name());
+        }
     } else if (sort_by == "year") {
-        std::sort(db.begin(), db.end(), sort_year());
-        if (sort_order == "desc")
+        if (sort_order == "desc") {
+            std::sort(db.begin(), db.end(), sort_id());
             std::reverse(db.begin(), db.end());
+            std::sort(db.begin(), db.end(), sort_year());
+            std::reverse(db.begin(), db.end());
+        }
+        else {
+            std::sort(db.begin(), db.end(), sort_id());
+            std::sort(db.begin(), db.end(), sort_year());
+        }
     }
 }
 
@@ -39,10 +52,6 @@ bool sort_name::operator()(const Item *a, const Item *b) {
     else return true;
 }
 
-bool sort_issue::operator()(const Item *a, const Item *b) {
-    return a->get_issue() < b->get_issue();
-}
-
 bool sort_year::operator()(const Item *a, const Item *b) {
     return stoi(a->year) < stoi(b->year);
 }
@@ -54,15 +63,6 @@ Item::Item(std::string a, std::string b) {
 }
 
 Item::~Item() {
-}
-
-// getting functions
-const int Item::get_issue() {}
-
-const int Book::get_issue() { return 0; }
-
-const int Journal::get_issue() {
-    return stoi(issue);
 }
 
 // printing functions

@@ -28,8 +28,6 @@ public:
 
     virtual void set_id(int i) = 0;
 
-    const virtual int get_issue() = 0;
-
     friend sort_id;
     friend sort_name;
     friend sort_year;
@@ -49,8 +47,6 @@ public:
     bool is_id(int id) override;
 
     void set_id(int i) override;
-
-    const virtual int get_issue() = 0;
 };
 
 class Journal : public Item {
@@ -68,8 +64,6 @@ public:
     bool is_id(int id) override;
 
     void set_id(int i) override;
-
-    const int get_issue() override;
 };
 
 // declaration of the sorting functions according to name
