@@ -14,52 +14,37 @@ void Database::add(Item *a) {
 }
 
 void Database::sort(std::string sort_by, std::string sort_order) {
-    bool change_was_made = true;
     if (sort_by == "id") {
-        while (change_was_made) {
-            change_was_made = false;
-            for (int i = 0; i < db.size() - 1; ++i) {
-                if (db[i] > db[i + 1]) {
-                    iter_swap(db.begin() + i, db.begin() + (i + 1));
-                    change_was_made = true;
-                } else continue;
-            }
-        }
+        std::sort(db.begin(), db.end(), sort_id());
+        if (sort_order == "desc")
+            std::reverse(db.begin(), db.end());
     } else if (sort_by == "name") {
-        while (change_was_made) {
-            change_was_made = false;
-            for (int i = 0; i < (int)db.size() - 1; ++i) {
-                if (db[i] > db[i + 1]) {
-                    iter_swap(db.begin() + i, db.begin() + (i + 1));
-                    change_was_made = true;
-                    std::cout << "change was made" << std::endl;
-                } else continue;
-            }
-        }
+        std::sort(db.begin(), db.end(), sort_name());
+        if (sort_order == "desc")
+            std::reverse(db.begin(), db.end());
     } else if (sort_by == "year") {
-        while (change_was_made) {
-            change_was_made = false;
-            for (int i = 0; i < db.size() - 1; ++i) {
-                if (db[i] > db[i + 1]) {
-                    iter_swap(db.begin() + i, db.begin() + (i + 1));
-                    change_was_made = true;
-                } else continue;
-            }
-        }
+        std::sort(db.begin(), db.end(), sort_year());
+        if (sort_order == "desc")
+            std::reverse(db.begin(), db.end());
     }
 }
 
 // sorting functions
 bool sort_id::operator()(const Item *a, const Item *b) {
-    return a->ID > b->ID;
+    return a->ID < b->ID;
 }
 
 bool sort_name::operator()(const Item *a, const Item *b) {
-    return a->name.compare(b->name);
+    if (b->name.compare(a->name) < 1) return false;
+    else return true;
+}
+
+bool sort_issue::operator()(const Item *a, const Item *b) {
+    return a->get_issue() < b->get_issue();
 }
 
 bool sort_year::operator()(const Item *a, const Item *b) {
-    return a->year.compare(b->year);
+    return stoi(a->year) < stoi(b->year);
 }
 
 // constructor of the Item class
@@ -69,6 +54,15 @@ Item::Item(std::string a, std::string b) {
 }
 
 Item::~Item() {
+}
+
+// getting functions
+const int Item::get_issue() {}
+
+const int Book::get_issue() { return 0; }
+
+const int Journal::get_issue() {
+    return stoi(issue);
 }
 
 // printing functions

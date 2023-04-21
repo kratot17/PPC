@@ -7,6 +7,7 @@
 struct sort_id;
 struct sort_name;
 struct sort_year;
+struct sort_issue;
 
 class Item {
 protected:
@@ -27,9 +28,12 @@ public:
 
     virtual void set_id(int i) = 0;
 
+    const virtual int get_issue() = 0;
+
     friend sort_id;
     friend sort_name;
     friend sort_year;
+    friend sort_issue;
 };
 
 class Book : public Item {
@@ -45,6 +49,8 @@ public:
     bool is_id(int id) override;
 
     void set_id(int i) override;
+
+    const virtual int get_issue() = 0;
 };
 
 class Journal : public Item {
@@ -62,6 +68,8 @@ public:
     bool is_id(int id) override;
 
     void set_id(int i) override;
+
+    const int get_issue() override;
 };
 
 // declaration of the sorting functions according to name
@@ -77,6 +85,10 @@ struct sort_year {
     inline bool operator()(const Item *a, const Item *b);
 };
 
+struct sort_issue {
+    inline bool operator()(const Item *a, const Item *b);
+};
+
 class Database {
 private:
     std::vector<Item *> db;
@@ -85,9 +97,11 @@ public:
     Database();
 
     void add(Item *a);
+
     void sort(std::string sort_by, std::string sort_order);
 
     void set_id();
+
     void list();                        // declaration of list method
     void find(const std::string &key);  // declaration of find method
     void erase(const std::string &key); // declaration of erase method
